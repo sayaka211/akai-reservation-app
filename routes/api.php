@@ -10,3 +10,4 @@ Route::post('/reservations', function (Request $request) {
 
     return response()->json(['message' => '予約受け付けました']);
 });
+Route::get('/reservations', [ReservationController::class, 'index']);

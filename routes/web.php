@@ -23,6 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+// 予約一覧画面（管理用）
+Route::get('/admin/reservations', function () {
+    return Inertia::render('Admin/ReservationList');
+});
 Route::get('/reserve', function () {
     return Inertia::render('ReservationForm');
 });
