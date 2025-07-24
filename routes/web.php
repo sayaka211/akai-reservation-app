@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReservationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,7 +28,10 @@ Route::middleware('auth')->group(function () {
 Route::get('/admin/reservations', function () {
     return Inertia::render('Admin/ReservationList');
 });
-Route::get('/reserve', function () {
-    return Inertia::render('ReservationForm');
+// 予約フォーム画面
+Route::get('/reserve/create', function () {
+    return Inertia::render('ReserveForm');
 });
+Route::post('/reserve', [ReservationController::class, 'store']);
+
 require __DIR__ . '/auth.php';
