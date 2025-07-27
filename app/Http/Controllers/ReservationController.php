@@ -9,12 +9,6 @@ use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
-
-    public function index(): JsonResponse
-    {
-        return response()->json(Reservation::orderBy('date', 'desc')->orderBy('start_time')->get());
-    }
-
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
