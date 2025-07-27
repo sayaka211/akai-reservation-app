@@ -1,70 +1,76 @@
 <template>
-    <div class="p-6 max-w-4xl mx-auto">
-        <div class="mb-4">
-            <label class="block mb-1 font-semibold">お名前</label>
-            <input v-model="form.name" type="text" class="w-full border rounded p-2" required>
-        </div>
-        <div class="mb-4">
-            <label class="block mb-1 font-semibold">メールアドレス</label>
-            <input v-model="form.email" type="email" class="w-full border rounded p-2" required>
-        </div>
-        <div class="mb-4">
-            <label class="block mb-1 font-semibold">電話番号</label>
-            <input v-model="form.phone" type="tel" class="w-full border rounded p-2" required>
-        </div>
-        <div class="mb-4">
-            <label class="block mb-1 font-semibold">備考</label>
-            <textarea v-model="form.notes" class="w-full border rounded p-2"></textarea>
-        </div>
+    <AppLayout>
+        <form @submit.prevent="submit" class="max-w-xl mx-auto space-y-4">
+            <div class="p-6 max-w-4xl mx-auto">
+                <div class="mb-4">
+                    <label class="block mb-1 font-semibold">お名前</label>
+                    <input v-model="form.name" type="text" class="w-full border rounded p-2" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-semibold">メールアドレス</label>
+                    <input v-model="form.email" type="email" class="w-full border rounded p-2" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-semibold">電話番号</label>
+                    <input v-model="form.phone" type="tel" class="w-full border rounded p-2" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-semibold">備考</label>
+                    <textarea v-model="form.notes" class="w-full border rounded p-2"></textarea>
+                </div>
 
-        <!-- 日付選択 -->
-        <div class="mb-4">
-            <label class="block mb-2 font-semibold">日付を選択</label>
-            <input type="date" v-model="form.date" class="border rounded px-3 py-2 w-full"/>
-        </div>
+                <!-- 日付選択 -->
+                <div class="mb-4">
+                    <label class="block mb-2 font-semibold">日付を選択</label>
+                    <input type="date" v-model="form.date" class="border rounded px-3 py-2 w-full"/>
+                </div>
 
-        <!-- 時間スロット -->
-        <div>
-            <label class="block mb-2 font-semibold">時間を選択</label>
-            <div class="grid grid-cols-8 gap-2">
-                <div
-                    v-for="time in timeSlots"
-                    :key="time"
-                    class="text-center px-2 py-3 rounded cursor-pointer border"
-                    :class="{
+                <!-- 時間スロット -->
+                <div>
+                    <label class="block mb-2 font-semibold">時間を選択</label>
+                    <div class="grid grid-cols-8 gap-2">
+                        <div
+                            v-for="time in timeSlots"
+                            :key="time"
+                            class="text-center px-2 py-3 rounded cursor-pointer border"
+                            :class="{
             'bg-gray-300 text-gray-600 cursor-not-allowed': isReserved(time),
             'bg-blue-500 text-white': isSelected(time),
             'hover:bg-blue-100': !isReserved(time) && !isSelected(time)
           }"
-                    @click="selectTime(time)"
-                >
-                    {{ time }}
+                            @click="selectTime(time)"
+                        >
+                            {{ time }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 確認と送信 -->
+
+                <div class="mt-6">
+                    <p class="mb-2">選択された時間: <strong>{{ form.start_time }} ~ {{ form.end_time }}</strong></p>
+                    <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                            :disabled="!form.date || !form.start_time || !form.end_time"
+                    >予約する</button>
                 </div>
             </div>
-        </div>
-
-        <!-- 確認と送信 -->
-        <div class="mt-6">
-            <p class="mb-2">選択された時間: <strong>{{ form.start_time }} ~ {{ form.end_time }}</strong></p>
-            <button
-                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-                :disabled="!form.date || !form.start_time || !form.end_time"
-                @click="submit"
-            >
-                予約する
-            </button>
-        </div>
-    </div>
+        </form>
+    </AppLayout>
 </template>
 
 <script setup>
-import {reactive} from 'vue'
-import {router} from '@inertiajs/vue3'
+import {router, useForm} from '@inertiajs/vue3'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
-const form = reactive({
+const form = useForm({
+    name: '',
+    email: '',
+    phone: '',
     date: '',
     start_time: '',
     end_time: '',
+    notes: '',
 })
 
 // 予約済み時間（本来はAPIなどから取得）
@@ -143,7 +149,7 @@ function isSelected(time) {
 
 
 function submit() {
-    router.post('/reserve', form)
+    form.post('/reserve');
 }
 </script>
 

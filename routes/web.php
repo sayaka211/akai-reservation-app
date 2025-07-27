@@ -32,6 +32,6 @@ Route::get('/admin/reservations', function () {
 Route::get('/reserve/create', function () {
     return Inertia::render('ReserveForm');
 });
-Route::post('/reserve', [ReservationController::class, 'store']);
+Route::post('/reserve', [ReservationController::class, 'store'])->name('reserve.store');
 
 require __DIR__ . '/auth.php';
