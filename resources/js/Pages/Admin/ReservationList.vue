@@ -34,7 +34,7 @@ import axios from 'axios'
 const reservations = ref([])
 
 onMounted(async () => {
-    const res = await axios.get('/api/reservations')
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/reservations`)
     reservations.value = res.data
 })
 </script>
