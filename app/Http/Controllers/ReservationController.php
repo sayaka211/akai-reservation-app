@@ -22,13 +22,13 @@ class ReservationController extends Controller
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
             'date' => 'required|date',
-            'start_time' => 'required',
-            'end_time' => 'required|after:start_time',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'notes' => 'nullable|string',
         ]);
 
         Reservation::create($validated);
 
-        return redirect('/reserve')->with('message', '予約が完了しました');
+        return redirect('/reserve/create')->with('message', '予約が完了しました');
     }
 }
