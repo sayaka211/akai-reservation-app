@@ -52,7 +52,8 @@
                     <button type="submit"
                             class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                             :disabled="!form.date || !form.start_time || !form.end_time"
-                    >予約する</button>
+                    >予約する
+                    </button>
                 </div>
             </div>
         </form>
@@ -60,8 +61,9 @@
 </template>
 
 <script setup>
-import {router, useForm} from '@inertiajs/vue3'
+import {useForm} from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import {onMounted, ref} from "vue";
 
 const form = useForm({
     name: '',
@@ -74,7 +76,15 @@ const form = useForm({
 })
 
 // 予約済み時間（本来はAPIなどから取得）
-const reservedTimes = ['10:00', '10:30', '11:00']
+const reservedSlots = ref([])
+
+onMounted(async () => {
+    const res = await axios.get('/api/reservations')
+    reservedSlots.value = res.data.map(r => {
+        const range = getTimeRange(r.start_time, r.end_time)
+        return r.date ? range.map(t => `${r.date}_${t}`) : []
+    }).flat()
+})
 
 const timeSlots = []
 for (let h = 9; h <= 21; h++) {
@@ -86,7 +96,8 @@ for (let h = 9; h <= 21; h++) {
 }
 
 function isReserved(time) {
-    return reservedTimes.includes(time)
+    if (!form.date) return false
+    return reservedSlots.value.includes(`${form.date}_${time}`)
 }
 
 function selectTime(time) {
